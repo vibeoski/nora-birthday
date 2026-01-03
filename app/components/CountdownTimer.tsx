@@ -39,30 +39,30 @@ export default function CountdownTimer() {
   const formatTime = (value: number) => String(value).padStart(2, '0');
 
   return (
-    <div className="flex gap-4 md:gap-6 justify-center flex-wrap">
-      <div className="flex flex-col items-center glass-effect rounded-2xl p-6 md:p-8 shadow-xl min-w-[90px] md:min-w-[110px] card-hover border border-white/20">
-        <div className="text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-br from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2 tabular-nums">
+    <div className="flex gap-3 justify-center flex-wrap px-2">
+      <div className="flex flex-col items-center glass-effect rounded-xl p-4 shadow-xl min-w-[70px] border border-white/20">
+        <div className="text-3xl font-bold bg-gradient-to-br from-purple-600 to-pink-600 bg-clip-text text-transparent mb-1 tabular-nums">
           {formatTime(timeLeft.days)}
         </div>
-        <div className="text-xs text-slate-600 font-semibold uppercase tracking-widest">Days</div>
+        <div className="text-[10px] text-slate-600 font-semibold uppercase tracking-wider">Days</div>
       </div>
-      <div className="flex flex-col items-center glass-effect rounded-2xl p-6 md:p-8 shadow-xl min-w-[90px] md:min-w-[110px] card-hover border border-white/20">
-        <div className="text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-br from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2 tabular-nums">
+      <div className="flex flex-col items-center glass-effect rounded-xl p-4 shadow-xl min-w-[70px] border border-white/20">
+        <div className="text-3xl font-bold bg-gradient-to-br from-purple-600 to-pink-600 bg-clip-text text-transparent mb-1 tabular-nums">
           {formatTime(timeLeft.hours)}
         </div>
-        <div className="text-xs text-slate-600 font-semibold uppercase tracking-widest">Hours</div>
+        <div className="text-[10px] text-slate-600 font-semibold uppercase tracking-wider">Hours</div>
       </div>
-      <div className="flex flex-col items-center glass-effect rounded-2xl p-6 md:p-8 shadow-xl min-w-[90px] md:min-w-[110px] card-hover border border-white/20">
-        <div className="text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-br from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2 tabular-nums">
+      <div className="flex flex-col items-center glass-effect rounded-xl p-4 shadow-xl min-w-[70px] border border-white/20">
+        <div className="text-3xl font-bold bg-gradient-to-br from-purple-600 to-pink-600 bg-clip-text text-transparent mb-1 tabular-nums">
           {formatTime(timeLeft.minutes)}
         </div>
-        <div className="text-xs text-slate-600 font-semibold uppercase tracking-widest">Minutes</div>
+        <div className="text-[10px] text-slate-600 font-semibold uppercase tracking-wider">Minutes</div>
       </div>
-      <div className="flex flex-col items-center glass-effect rounded-2xl p-6 md:p-8 shadow-xl min-w-[90px] md:min-w-[110px] card-hover border border-white/20">
-        <div className="text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-br from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2 tabular-nums">
+      <div className="flex flex-col items-center glass-effect rounded-xl p-4 shadow-xl min-w-[70px] border border-white/20">
+        <div className="text-3xl font-bold bg-gradient-to-br from-purple-600 to-pink-600 bg-clip-text text-transparent mb-1 tabular-nums">
           {formatTime(timeLeft.seconds)}
         </div>
-        <div className="text-xs text-slate-600 font-semibold uppercase tracking-widest">Seconds</div>
+        <div className="text-[10px] text-slate-600 font-semibold uppercase tracking-wider">Seconds</div>
       </div>
     </div>
   );
