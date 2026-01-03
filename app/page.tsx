@@ -2,13 +2,13 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
-import confetti from 'canvas-confetti';
 import { supabase } from '@/lib/supabase';
 import CountdownTimer from './components/CountdownTimer';
 import { MapPin, Calendar, Clock, Users, UtensilsCrossed, Heart, ArrowDown } from 'lucide-react';
 import ParallaxBackground from './components/ParallaxBackground';
 import ScrollProgress from './components/ScrollProgress';
 import ScrollReveal from './components/ScrollReveal';
+import MilestoneTimeline from './components/MilestoneTimeline';
 
 export default function Home() {
   const [rsvpForm, setRsvpForm] = useState({
@@ -26,18 +26,13 @@ export default function Home() {
   const [letterSuccess, setLetterSuccess] = useState(false);
   const [rsvpError, setRsvpError] = useState('');
   const [letterError, setLetterError] = useState('');
-  const [confettiTriggered, setConfettiTriggered] = useState({
-    countdown: false,
-    rsvp: false,
-    timeCapsule: false,
-  });
   
   const countdownRef = useRef<HTMLElement>(null);
   const rsvpRef = useRef<HTMLElement>(null);
   const timeCapsuleRef = useRef<HTMLElement>(null);
   const heroImageRef = useRef<HTMLDivElement>(null);
 
-  // Scroll-triggered confetti and parallax
+  // Parallax effect on hero image
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
@@ -48,31 +43,11 @@ export default function Home() {
         const parallaxSpeed = 0.3;
         heroImageRef.current.style.transform = `translateY(${scrollY * parallaxSpeed}px)`;
       }
-
-      // Confetti at milestones (one-time per section)
-      const checkSection = (ref: React.RefObject<HTMLElement | null>, key: keyof typeof confettiTriggered) => {
-        if (ref.current && !confettiTriggered[key]) {
-          const rect = ref.current.getBoundingClientRect();
-          if (rect.top < windowHeight * 0.7 && rect.top > -rect.height) {
-            setConfettiTriggered((prev) => ({ ...prev, [key]: true }));
-            confetti({
-              particleCount: 30,
-              spread: 50,
-              origin: { y: 0.5 },
-              colors: ['#667eea', '#764ba2', '#f093fb'],
-            });
-          }
-        }
-      };
-
-      checkSection(countdownRef, 'countdown');
-      checkSection(rsvpRef, 'rsvp');
-      checkSection(timeCapsuleRef, 'timeCapsule');
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [confettiTriggered]);
+  }, []);
 
   const handleRsvpSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -94,13 +69,6 @@ export default function Home() {
 
       setRsvpSuccess(true);
       setRsvpForm({ name: '', attending: true, dietaryPreference: 'non-veg' });
-      
-      confetti({
-        particleCount: 100,
-        spread: 70,
-        origin: { y: 0.6 },
-        colors: ['#667eea', '#764ba2', '#f093fb'],
-      });
     } catch (error) {
       console.error('Error submitting RSVP:', error);
       setRsvpError('There was an error submitting your RSVP. Please try again.');
@@ -185,6 +153,13 @@ export default function Home() {
           <div className="absolute bottom-6 left-1/2 -translate-x-1/2 animate-bounce">
             <ArrowDown className="w-5 h-5 text-slate-400" />
           </div>
+        </div>
+      </section>
+
+      {/* Milestone Timeline Section */}
+      <section className="relative py-12 px-4 z-10">
+        <div className="max-w-full mx-auto">
+          <MilestoneTimeline />
         </div>
       </section>
 
