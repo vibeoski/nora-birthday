@@ -1,19 +1,20 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import confetti from 'canvas-confetti';
 import { supabase } from '@/lib/supabase';
 import CountdownTimer from './components/CountdownTimer';
 import { MapPin, Calendar, Clock, Users, UtensilsCrossed, Heart, ArrowDown } from 'lucide-react';
 import ParallaxBackground from './components/ParallaxBackground';
+import ScrollProgress from './components/ScrollProgress';
+import ScrollReveal from './components/ScrollReveal';
 
 export default function Home() {
   const [rsvpForm, setRsvpForm] = useState({
     name: '',
     attending: true,
-    guestCount: '1',
-    dietaryInfo: '',
+    dietaryPreference: 'non-veg',
   });
   const [letterForm, setLetterForm] = useState({
     guestName: '',
@@ -25,6 +26,54 @@ export default function Home() {
   const [letterSuccess, setLetterSuccess] = useState(false);
   const [rsvpError, setRsvpError] = useState('');
   const [letterError, setLetterError] = useState('');
+  const [confettiTriggered, setConfettiTriggered] = useState({
+    countdown: false,
+    rsvp: false,
+    timeCapsule: false,
+  });
+  
+  const countdownRef = useRef<HTMLElement>(null);
+  const rsvpRef = useRef<HTMLElement>(null);
+  const timeCapsuleRef = useRef<HTMLElement>(null);
+  const heroImageRef = useRef<HTMLDivElement>(null);
+
+  // Scroll-triggered confetti and parallax
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      const windowHeight = window.innerHeight;
+
+      // Parallax effect on hero image (subtle, mobile-friendly)
+      if (heroImageRef.current && scrollY < windowHeight) {
+        const parallaxSpeed = 0.3;
+        heroImageRef.current.style.transform = `translateY(${scrollY * parallaxSpeed}px)`;
+      }
+
+      // Confetti at milestones (one-time per section)
+      const checkSection = (ref: React.RefObject<HTMLElement | null>, key: keyof typeof confettiTriggered) => {
+        if (ref.current && !confettiTriggered[key]) {
+          const rect = ref.current.getBoundingClientRect();
+          if (rect.top < windowHeight * 0.7 && rect.top > -rect.height) {
+            setConfettiTriggered((prev) => ({ ...prev, [key]: true }));
+            confetti({
+              particleCount: 30,
+              spread: 50,
+              origin: { y: 0.5 },
+              colors: ['#667eea', '#764ba2', '#f093fb'],
+            });
+          }
+        }
+      };
+
+      checkSection(countdownRef, 'countdown');
+      checkSection(rsvpRef, 'rsvp');
+      checkSection(timeCapsuleRef, 'timeCapsule');
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [confettiTriggered]);
+
   const handleRsvpSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setRsvpSubmitting(true);
@@ -36,15 +85,15 @@ export default function Home() {
         {
           name: rsvpForm.name,
           attending: rsvpForm.attending,
-          guests_count: parseInt(rsvpForm.guestCount, 10),
-          dietary_info: rsvpForm.dietaryInfo || null,
+          guests_count: 1,
+          dietary_info: rsvpForm.dietaryPreference,
         },
       ]);
 
       if (error) throw error;
 
       setRsvpSuccess(true);
-      setRsvpForm({ name: '', attending: true, guestCount: '1', dietaryInfo: '' });
+      setRsvpForm({ name: '', attending: true, dietaryPreference: 'non-veg' });
       
       confetti({
         particleCount: 100,
@@ -89,12 +138,12 @@ export default function Home() {
   };
 
   const openGoogleMaps = () => {
-    const address = encodeURIComponent('Your Address Here');
-    window.open(`https://www.google.com/maps/search/?api=1&query=${address}`, '_blank');
+    window.open('https://maps.app.goo.gl/H36GxiACDzGrsGv99', '_blank', 'noopener,noreferrer');
   };
 
   return (
     <div className="min-h-screen relative overflow-hidden">
+      <ScrollProgress />
       <ParallaxBackground />
       
       {/* Hero Section - Mobile Optimized */}
@@ -116,8 +165,11 @@ export default function Home() {
             Join us for a celebration of this special milestone
           </p>
 
-          {/* Image - Mobile optimized */}
-          <div className="relative w-full mx-auto mb-12 rounded-2xl overflow-hidden shadow-2xl">
+          {/* Image - Mobile optimized with parallax */}
+          <div 
+            ref={heroImageRef}
+            className="relative w-full mx-auto mb-12 rounded-2xl overflow-hidden shadow-2xl will-change-transform"
+          >
             <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent z-10"></div>
             <Image
               src="/nora.jpg"
@@ -137,20 +189,25 @@ export default function Home() {
       </section>
 
       {/* Countdown Section - Mobile Optimized */}
-      <section className="relative py-12 px-4 z-10">
+      <section ref={countdownRef} className="relative py-12 px-4 z-10">
         <div className="max-w-full mx-auto">
-          <div className="text-center mb-8">
-            <h2 className="text-2xl font-bold text-slate-900 mb-3">Countdown to Celebration</h2>
-            <div className="w-16 h-0.5 bg-gradient-to-r from-transparent via-purple-500 to-transparent mx-auto"></div>
-          </div>
-          <CountdownTimer />
+          <ScrollReveal>
+            <div className="text-center mb-8">
+              <h2 className="text-2xl font-bold text-slate-900 mb-3">Countdown to Celebration</h2>
+              <div className="w-16 h-0.5 bg-gradient-to-r from-transparent via-purple-500 to-transparent mx-auto"></div>
+            </div>
+          </ScrollReveal>
+          <ScrollReveal delay={100}>
+            <CountdownTimer />
+          </ScrollReveal>
         </div>
       </section>
 
       {/* Information Section - Mobile Optimized */}
       <section className="relative py-12 px-4 z-10">
         <div className="max-w-4xl mx-auto">
-          <div className="glass-effect rounded-3xl p-8 md:p-12 shadow-2xl card-hover">
+          <ScrollReveal>
+            <div className="glass-effect rounded-3xl p-8 md:p-12 shadow-2xl card-hover">
             <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-12 text-center">
               Event Details
             </h2>
@@ -192,19 +249,23 @@ export default function Home() {
               View on Google Maps
             </button>
           </div>
+          </ScrollReveal>
         </div>
       </section>
 
       {/* RSVP Section - Mobile Optimized */}
-      <section className="relative py-12 px-4 z-10">
+      <section ref={rsvpRef} className="relative py-12 px-4 z-10">
         <div className="max-w-full mx-auto">
-          <div className="text-center mb-8">
-            <h2 className="text-2xl font-bold text-slate-900 mb-2">RSVP</h2>
-            <p className="text-sm text-slate-600">Please let us know if you can join us</p>
-            <div className="w-16 h-0.5 bg-gradient-to-r from-transparent via-purple-500 to-transparent mx-auto mt-3"></div>
-          </div>
+          <ScrollReveal>
+            <div className="text-center mb-8">
+              <h2 className="text-2xl font-bold text-slate-900 mb-2">RSVP</h2>
+              <p className="text-sm text-slate-600">Please let us know if you can join us</p>
+              <div className="w-16 h-0.5 bg-gradient-to-r from-transparent via-purple-500 to-transparent mx-auto mt-3"></div>
+            </div>
+          </ScrollReveal>
 
-          <div className="glass-effect rounded-2xl p-6 shadow-2xl">
+          <ScrollReveal delay={100}>
+            <div className="glass-effect rounded-2xl p-6 shadow-2xl">
             {rsvpSuccess && (
               <div className="mb-6 p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl text-center text-sm font-medium">
                 Thank you for your RSVP. We look forward to celebrating with you.
@@ -242,10 +303,10 @@ export default function Home() {
                   Attendance
                 </label>
                 <div className="grid grid-cols-2 gap-3">
-                  <label className={`flex items-center justify-center p-4 rounded-xl border-2 cursor-pointer transition-all touch-manipulation active:scale-95 ${
+                  <label className={`relative flex items-center justify-center p-4 rounded-xl border-2 cursor-pointer transition-all touch-manipulation active:scale-95 ${
                     rsvpForm.attending 
-                      ? 'border-slate-900 bg-slate-900 text-white font-medium shadow-lg' 
-                      : 'border-slate-200 bg-white/50 backdrop-blur-sm text-slate-700 active:border-slate-300'
+                      ? 'border-slate-700 bg-slate-100 text-slate-800 font-semibold shadow-md' 
+                      : 'border-slate-200 bg-white/50 backdrop-blur-sm text-slate-600 active:border-slate-300'
                   }`}>
                     <input
                       type="radio"
@@ -258,12 +319,19 @@ export default function Home() {
                       }}
                       className="sr-only"
                     />
+                    {rsvpForm.attending && (
+                      <span className="absolute top-2 right-2 w-5 h-5 bg-slate-700 rounded-full flex items-center justify-center">
+                        <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </span>
+                    )}
                     <span className="text-sm">Attending</span>
                   </label>
-                  <label className={`flex items-center justify-center p-4 rounded-xl border-2 cursor-pointer transition-all touch-manipulation active:scale-95 ${
+                  <label className={`relative flex items-center justify-center p-4 rounded-xl border-2 cursor-pointer transition-all touch-manipulation active:scale-95 ${
                     !rsvpForm.attending 
-                      ? 'border-slate-900 bg-slate-900 text-white font-medium shadow-lg' 
-                      : 'border-slate-200 bg-white/50 backdrop-blur-sm text-slate-700 active:border-slate-300'
+                      ? 'border-slate-700 bg-slate-100 text-slate-800 font-semibold shadow-md' 
+                      : 'border-slate-200 bg-white/50 backdrop-blur-sm text-slate-600 active:border-slate-300'
                   }`}>
                     <input
                       type="radio"
@@ -276,45 +344,74 @@ export default function Home() {
                       }}
                       className="sr-only"
                     />
+                    {!rsvpForm.attending && (
+                      <span className="absolute top-2 right-2 w-5 h-5 bg-slate-700 rounded-full flex items-center justify-center">
+                        <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </span>
+                    )}
                     <span className="text-sm">Not Attending</span>
                   </label>
                 </div>
               </div>
 
               <div>
-                <label htmlFor="guestCount" className="block text-slate-700 font-medium mb-2 text-sm">
-                  Number of Guests
+                <label className="block text-slate-700 font-medium mb-3 text-sm">
+                  Dietary Preference
                 </label>
-                <input
-                  type="number"
-                  id="guestCount"
-                  required
-                  min="1"
-                  value={rsvpForm.guestCount}
-                  onChange={(e) => {
-                    setRsvpForm({ ...rsvpForm, guestCount: e.target.value });
-                    if (rsvpError) setRsvpError('');
-                    if (rsvpSuccess) setRsvpSuccess(false);
-                  }}
-                  className="w-full px-4 py-3.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-slate-900 transition-all bg-white/50 backdrop-blur-sm text-base touch-manipulation"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="dietaryInfo" className="block text-slate-700 font-medium mb-2 text-sm">
-                  Dietary Requirements
-                </label>
-                <textarea
-                  id="dietaryInfo"
-                  value={rsvpForm.dietaryInfo}
-                  onChange={(e) => {
-                    setRsvpForm({ ...rsvpForm, dietaryInfo: e.target.value });
-                    if (rsvpError) setRsvpError('');
-                  }}
-                  className="w-full px-4 py-3.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-slate-900 resize-none transition-all bg-white/50 backdrop-blur-sm text-base touch-manipulation"
-                  rows={4}
-                  placeholder="Any dietary restrictions or allergies?"
-                />
+                <div className="grid grid-cols-2 gap-3">
+                  <label className={`relative flex items-center justify-center p-4 rounded-xl border-2 cursor-pointer transition-all touch-manipulation active:scale-95 ${
+                    rsvpForm.dietaryPreference === 'veg'
+                      ? 'border-slate-700 bg-slate-100 text-slate-800 font-semibold shadow-md' 
+                      : 'border-slate-200 bg-white/50 backdrop-blur-sm text-slate-600 active:border-slate-300'
+                  }`}>
+                    <input
+                      type="radio"
+                      name="dietaryPreference"
+                      value="veg"
+                      checked={rsvpForm.dietaryPreference === 'veg'}
+                      onChange={(e) => {
+                        setRsvpForm({ ...rsvpForm, dietaryPreference: e.target.value });
+                        if (rsvpError) setRsvpError('');
+                      }}
+                      className="sr-only"
+                    />
+                    {rsvpForm.dietaryPreference === 'veg' && (
+                      <span className="absolute top-2 right-2 w-5 h-5 bg-slate-700 rounded-full flex items-center justify-center">
+                        <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </span>
+                    )}
+                    <span className="text-sm">Veg</span>
+                  </label>
+                  <label className={`relative flex items-center justify-center p-4 rounded-xl border-2 cursor-pointer transition-all touch-manipulation active:scale-95 ${
+                    rsvpForm.dietaryPreference === 'non-veg'
+                      ? 'border-slate-700 bg-slate-100 text-slate-800 font-semibold shadow-md' 
+                      : 'border-slate-200 bg-white/50 backdrop-blur-sm text-slate-600 active:border-slate-300'
+                  }`}>
+                    <input
+                      type="radio"
+                      name="dietaryPreference"
+                      value="non-veg"
+                      checked={rsvpForm.dietaryPreference === 'non-veg'}
+                      onChange={(e) => {
+                        setRsvpForm({ ...rsvpForm, dietaryPreference: e.target.value });
+                        if (rsvpError) setRsvpError('');
+                      }}
+                      className="sr-only"
+                    />
+                    {rsvpForm.dietaryPreference === 'non-veg' && (
+                      <span className="absolute top-2 right-2 w-5 h-5 bg-slate-700 rounded-full flex items-center justify-center">
+                        <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </span>
+                    )}
+                    <span className="text-sm">Non-veg</span>
+                  </label>
+                </div>
               </div>
 
               <button
@@ -325,23 +422,27 @@ export default function Home() {
                 {rsvpSubmitting ? 'Submitting...' : 'Submit RSVP'}
               </button>
             </form>
-          </div>
+            </div>
+          </ScrollReveal>
         </div>
       </section>
 
       {/* Time Capsule Section - Mobile Optimized */}
-      <section className="relative py-12 px-4 z-10">
+      <section ref={timeCapsuleRef} className="relative py-12 px-4 z-10">
         <div className="max-w-full mx-auto">
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-br from-purple-100 to-pink-100 mb-3">
-              <Heart className="w-7 h-7 text-purple-600 fill-purple-600" />
+          <ScrollReveal>
+            <div className="text-center mb-8">
+              <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-br from-purple-100 to-pink-100 mb-3">
+                <Heart className="w-7 h-7 text-purple-600 fill-purple-600" />
+              </div>
+              <h2 className="text-2xl font-bold text-slate-900 mb-2">Time Capsule</h2>
+              <p className="text-sm text-slate-600">Write a letter to Nora (to be opened in 2042)</p>
+              <div className="w-16 h-0.5 bg-gradient-to-r from-transparent via-purple-500 to-transparent mx-auto mt-3"></div>
             </div>
-            <h2 className="text-2xl font-bold text-slate-900 mb-2">Time Capsule</h2>
-            <p className="text-sm text-slate-600">Write a letter to Nora (to be opened in 2042)</p>
-            <div className="w-16 h-0.5 bg-gradient-to-r from-transparent via-purple-500 to-transparent mx-auto mt-3"></div>
-          </div>
+          </ScrollReveal>
 
-          <div className="glass-effect rounded-2xl p-6 shadow-2xl">
+          <ScrollReveal delay={100}>
+            <div className="glass-effect rounded-2xl p-6 shadow-2xl">
             {letterSuccess && (
               <div className="mb-6 p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl text-center text-sm font-medium">
                 Your letter has been saved. Thank you for your message.
@@ -401,7 +502,8 @@ export default function Home() {
                 {letterSubmitting ? 'Saving...' : 'Save Letter'}
               </button>
             </form>
-          </div>
+            </div>
+          </ScrollReveal>
         </div>
       </section>
     </div>
