@@ -36,23 +36,33 @@ export default function CountdownTimer() {
     return () => clearInterval(interval);
   }, []);
 
+  const formatTime = (value: number) => String(value).padStart(2, '0');
+
   return (
-    <div className="flex gap-4 justify-center flex-wrap">
-      <div className="flex flex-col items-center">
-        <div className="text-4xl md:text-5xl font-bold text-pink-400">{timeLeft.days}</div>
-        <div className="text-sm text-gray-600">Days</div>
+    <div className="flex gap-4 md:gap-6 justify-center flex-wrap">
+      <div className="flex flex-col items-center glass-effect rounded-2xl p-6 md:p-8 shadow-xl min-w-[90px] md:min-w-[110px] card-hover border border-white/20">
+        <div className="text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-br from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2 tabular-nums">
+          {formatTime(timeLeft.days)}
+        </div>
+        <div className="text-xs text-slate-600 font-semibold uppercase tracking-widest">Days</div>
       </div>
-      <div className="flex flex-col items-center">
-        <div className="text-4xl md:text-5xl font-bold text-pink-400">{timeLeft.hours}</div>
-        <div className="text-sm text-gray-600">Hours</div>
+      <div className="flex flex-col items-center glass-effect rounded-2xl p-6 md:p-8 shadow-xl min-w-[90px] md:min-w-[110px] card-hover border border-white/20">
+        <div className="text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-br from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2 tabular-nums">
+          {formatTime(timeLeft.hours)}
+        </div>
+        <div className="text-xs text-slate-600 font-semibold uppercase tracking-widest">Hours</div>
       </div>
-      <div className="flex flex-col items-center">
-        <div className="text-4xl md:text-5xl font-bold text-pink-400">{timeLeft.minutes}</div>
-        <div className="text-sm text-gray-600">Minutes</div>
+      <div className="flex flex-col items-center glass-effect rounded-2xl p-6 md:p-8 shadow-xl min-w-[90px] md:min-w-[110px] card-hover border border-white/20">
+        <div className="text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-br from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2 tabular-nums">
+          {formatTime(timeLeft.minutes)}
+        </div>
+        <div className="text-xs text-slate-600 font-semibold uppercase tracking-widest">Minutes</div>
       </div>
-      <div className="flex flex-col items-center">
-        <div className="text-4xl md:text-5xl font-bold text-pink-400">{timeLeft.seconds}</div>
-        <div className="text-sm text-gray-600">Seconds</div>
+      <div className="flex flex-col items-center glass-effect rounded-2xl p-6 md:p-8 shadow-xl min-w-[90px] md:min-w-[110px] card-hover border border-white/20">
+        <div className="text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-br from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2 tabular-nums">
+          {formatTime(timeLeft.seconds)}
+        </div>
+        <div className="text-xs text-slate-600 font-semibold uppercase tracking-widest">Seconds</div>
       </div>
     </div>
   );

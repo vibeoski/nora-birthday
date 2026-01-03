@@ -26,6 +26,7 @@ export default function AdminPage() {
   const [messages, setMessages] = useState<TimeCapsule[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [dataError, setDataError] = useState('');
 
   // Simple password check - you can change this or use env variable
   const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || 'nora2024';
@@ -42,6 +43,7 @@ export default function AdminPage() {
 
   const fetchData = async () => {
     setLoading(true);
+    setDataError('');
     try {
       // Fetch RSVPs
       const { data: rsvpData, error: rsvpError } = await supabase
@@ -62,7 +64,7 @@ export default function AdminPage() {
       setMessages(messageData || []);
     } catch (err) {
       console.error('Error fetching data:', err);
-      alert('Error loading data. Please check your Supabase connection.');
+      setDataError('Error loading data. Please check your Supabase connection and try again.');
     } finally {
       setLoading(false);
     }
@@ -70,7 +72,9 @@ export default function AdminPage() {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-[#FFFAF0] flex items-center justify-center px-4">
+      <div className="min-h-screen relative flex items-center justify-center px-4">
+        <div className="fixed inset-0 bg-gradient-to-br from-pink-200/40 via-purple-200/30 to-blue-200/40 pointer-events-none z-0"></div>
+        <div className="relative z-10 w-full">
         <div className="bg-white rounded-3xl shadow-lg p-8 max-w-md w-full">
           <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">Admin Access</h1>
           <form onSubmit={handleLogin} className="space-y-4">
@@ -100,12 +104,15 @@ export default function AdminPage() {
             </button>
           </form>
         </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#FFFAF0] py-8 px-4">
+    <div className="min-h-screen relative py-8 px-4">
+      <div className="fixed inset-0 bg-gradient-to-br from-pink-200/40 via-purple-200/30 to-blue-200/40 pointer-events-none z-0"></div>
+      <div className="relative z-10">
       <div className="max-w-6xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-4xl font-bold text-gray-800">Admin Dashboard</h1>
@@ -117,6 +124,12 @@ export default function AdminPage() {
             {loading ? 'Loading...' : 'Refresh'}
           </button>
         </div>
+
+        {dataError && (
+          <div className="mb-6 p-4 bg-red-50 border-2 border-red-200 text-red-800 rounded-xl">
+            {dataError}
+          </div>
+        )}
 
         {/* RSVPs Section */}
         <div className="bg-white rounded-3xl shadow-lg p-6 md:p-8 mb-8">
@@ -193,6 +206,7 @@ export default function AdminPage() {
             )}
           </div>
         </div>
+      </div>
       </div>
     </div>
   );
