@@ -395,6 +395,13 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Milestone Timeline Section */}
+      <section className="relative py-12 px-4 z-10">
+        <div className="max-w-full mx-auto">
+          <MilestoneTimeline />
+        </div>
+      </section>
+
       {/* Time Capsule Section - Mobile Optimized */}
       <section ref={timeCapsuleRef} className="relative py-12 px-4 z-10">
         <div className="max-w-full mx-auto">
@@ -472,13 +479,6 @@ export default function Home() {
             </form>
             </div>
           </ScrollReveal>
-        </div>
-      </section>
-
-      {/* Milestone Timeline Section */}
-      <section className="relative py-12 px-4 z-10">
-        <div className="max-w-full mx-auto">
-          <MilestoneTimeline />
         </div>
       </section>
     </div>

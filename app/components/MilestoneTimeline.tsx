@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import Image from 'next/image';
 import { Calendar, Baby, Smile, Utensils, BabyIcon, Heart, Cake } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import ScrollReveal from './ScrollReveal';
@@ -12,6 +13,7 @@ interface Milestone {
   description: string;
   icon: React.ReactNode;
   date?: string;
+  image?: string; // Optional image path (e.g., '/milestones/month-1.jpg')
 }
 
 const milestones: Milestone[] = [
@@ -22,6 +24,7 @@ const milestones: Milestone[] = [
     description: 'Nora arrived and filled our hearts with joy',
     icon: <Baby className="w-6 h-6" />,
     date: 'January 11, 2025',
+    image: '/milestones/month-0.jpg',
   },
   {
     id: '2',
@@ -29,6 +32,7 @@ const milestones: Milestone[] = [
     title: 'First Month',
     description: 'Growing stronger every day',
     icon: <Heart className="w-6 h-6" />,
+    image: '/milestones/month-1.jpg',
   },
   {
     id: '3',
@@ -36,6 +40,7 @@ const milestones: Milestone[] = [
     title: 'First Real Smile',
     description: 'That heart-melting smile that lights up the room',
     icon: <Smile className="w-6 h-6" />,
+    image: '/milestones/month-2.jpg',
   },
   {
     id: '4',
@@ -43,6 +48,7 @@ const milestones: Milestone[] = [
     title: 'First Laugh',
     description: 'The sweetest sound we\'ve ever heard',
     icon: <Smile className="w-6 h-6" />,
+    image: '/milestones/month-3.jpg',
   },
   {
     id: '5',
@@ -50,6 +56,7 @@ const milestones: Milestone[] = [
     title: 'Rolling Over',
     description: 'On the move! Rolling from back to tummy',
     icon: <BabyIcon className="w-6 h-6" />,
+    image: '/milestones/month-4.jpg',
   },
   {
     id: '6',
@@ -57,6 +64,7 @@ const milestones: Milestone[] = [
     title: 'Sitting Up',
     description: 'Sitting independently and exploring the world',
     icon: <BabyIcon className="w-6 h-6" />,
+    image: '/milestones/month-5.jpg',
   },
   {
     id: '7',
@@ -64,6 +72,7 @@ const milestones: Milestone[] = [
     title: 'First Solid Food',
     description: 'Trying new flavors and textures',
     icon: <Utensils className="w-6 h-6" />,
+    image: '/milestones/month-6.jpg',
   },
   {
     id: '8',
@@ -71,6 +80,7 @@ const milestones: Milestone[] = [
     title: 'Crawling',
     description: 'Exploring every corner of the house',
     icon: <BabyIcon className="w-6 h-6" />,
+    image: '/milestones/month-7.jpg',
   },
   {
     id: '9',
@@ -78,6 +88,7 @@ const milestones: Milestone[] = [
     title: 'First Word',
     description: 'The beginning of many conversations to come',
     icon: <Smile className="w-6 h-6" />,
+    image: '/milestones/month-8.jpg',
   },
   {
     id: '10',
@@ -85,6 +96,7 @@ const milestones: Milestone[] = [
     title: 'Standing Up',
     description: 'Pulling up and standing with support',
     icon: <BabyIcon className="w-6 h-6" />,
+    image: '/milestones/month-9.jpg',
   },
   {
     id: '11',
@@ -92,6 +104,7 @@ const milestones: Milestone[] = [
     title: 'First Steps',
     description: 'Taking those wobbly first steps',
     icon: <BabyIcon className="w-6 h-6" />,
+    image: '/milestones/month-10.jpg',
   },
   {
     id: '12',
@@ -100,6 +113,7 @@ const milestones: Milestone[] = [
     description: 'A whole year of love, laughter, and precious memories',
     icon: <Cake className="w-6 h-6" />,
     date: 'January 11, 2026',
+    image: '/milestones/month-12.jpg',
   },
 ];
 
@@ -113,13 +127,19 @@ export default function MilestoneTimeline() {
       if (month12Ref.current && !confettiTriggered) {
         const rect = month12Ref.current.getBoundingClientRect();
         const windowHeight = window.innerHeight;
+        const windowWidth = window.innerWidth;
         
         if (rect.top < windowHeight * 0.7 && rect.top > -rect.height) {
           setConfettiTriggered(true);
+          
+          // Calculate confetti origin based on milestone position
+          const x = (rect.left + rect.width / 2) / windowWidth;
+          const y = (rect.top + rect.height / 2) / windowHeight;
+          
           confetti({
             particleCount: 100,
             spread: 70,
-            origin: { y: 0.5 },
+            origin: { x, y },
             colors: ['#667eea', '#764ba2', '#f093fb'],
           });
         }
@@ -181,9 +201,22 @@ export default function MilestoneTimeline() {
                       <h3 className="text-lg font-bold text-slate-900 mb-2">
                         {milestone.title}
                       </h3>
-                      <p className="text-sm text-slate-600 leading-relaxed">
+                      <p className="text-sm text-slate-600 leading-relaxed mb-3">
                         {milestone.description}
                       </p>
+                      {/* Image display */}
+                      {milestone.image && (
+                        <div className="mt-4 rounded-xl overflow-hidden shadow-md">
+                          <Image
+                            src={milestone.image}
+                            alt={milestone.title}
+                            width={400}
+                            height={300}
+                            className="w-full h-auto object-cover"
+                            loading="lazy"
+                          />
+                        </div>
+                      )}
                     </div>
                   </div>
                 </ScrollReveal>
