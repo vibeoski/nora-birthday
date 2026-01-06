@@ -8,7 +8,6 @@ import { MapPin, Calendar, Clock, Users, UtensilsCrossed, Heart, ArrowDown } fro
 import ParallaxBackground from './components/ParallaxBackground';
 import ScrollProgress from './components/ScrollProgress';
 import ScrollReveal from './components/ScrollReveal';
-import MilestoneTimeline from './components/MilestoneTimeline';
 
 export default function Home() {
   const [rsvpForm, setRsvpForm] = useState({
@@ -390,13 +389,6 @@ export default function Home() {
             </form>
             </div>
           </ScrollReveal>
-        </div>
-      </section>
-
-      {/* Milestone Timeline Section */}
-      <section className="relative py-16 px-4 z-10">
-        <div className="max-w-full mx-auto">
-          <MilestoneTimeline />
         </div>
       </section>
 
