@@ -1,8 +1,10 @@
 'use client';
 
+import { useState } from 'react';
 import Image from 'next/image';
 import { Calendar, Baby, Smile, Utensils, BabyIcon, Heart, Cake } from 'lucide-react';
 import ScrollReveal from './ScrollReveal';
+import ImageLightbox from './ImageLightbox';
 
 interface Milestone {
   id: string;
@@ -116,6 +118,15 @@ const milestones: Milestone[] = [
 ];
 
 export default function MilestoneTimeline() {
+  const [lightboxImage, setLightboxImage] = useState<{ src: string; alt: string } | null>(null);
+
+  const openLightbox = (src: string, alt: string) => {
+    setLightboxImage({ src, alt });
+  };
+
+  const closeLightbox = () => {
+    setLightboxImage(null);
+  };
 
   return (
     <div className="relative py-8 px-4">
@@ -168,7 +179,10 @@ export default function MilestoneTimeline() {
                       </p>
                       {/* Image display */}
                       {milestone.image && (
-                        <div className="mt-4 rounded-xl overflow-hidden shadow-md">
+                        <div 
+                          className="mt-4 rounded-xl overflow-hidden shadow-md cursor-pointer transition-transform duration-300 hover:scale-105"
+                          onClick={() => openLightbox(milestone.image!, milestone.title)}
+                        >
                           <Image
                             src={milestone.image}
                             alt={milestone.title}
@@ -186,6 +200,16 @@ export default function MilestoneTimeline() {
           </div>
         </div>
       </div>
+
+      {/* Image Lightbox */}
+      {lightboxImage && (
+        <ImageLightbox
+          imageSrc={lightboxImage.src}
+          imageAlt={lightboxImage.alt}
+          isOpen={!!lightboxImage}
+          onClose={closeLightbox}
+        />
+      )}
     </div>
   );
 }
