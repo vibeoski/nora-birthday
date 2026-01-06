@@ -27,9 +27,6 @@ export default function Home() {
   const [rsvpError, setRsvpError] = useState('');
   const [letterError, setLetterError] = useState('');
   
-  const countdownRef = useRef<HTMLElement>(null);
-  const rsvpRef = useRef<HTMLElement>(null);
-  const timeCapsuleRef = useRef<HTMLElement>(null);
   const heroImageRef = useRef<HTMLDivElement>(null);
 
   // Parallax effect on hero image
@@ -48,6 +45,7 @@ export default function Home() {
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
 
   const handleRsvpSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -157,7 +155,7 @@ export default function Home() {
       </section>
 
       {/* Countdown Section - Mobile Optimized */}
-      <section ref={countdownRef} className="relative py-12 px-4 z-10">
+      <section className="relative py-16 px-4 z-10">
         <div className="max-w-full mx-auto">
           <ScrollReveal>
             <div className="text-center mb-8">
@@ -172,7 +170,7 @@ export default function Home() {
       </section>
 
       {/* Information Section - Mobile Optimized */}
-      <section className="relative py-12 px-4 z-10">
+      <section className="relative py-16 px-4 z-10">
         <div className="max-w-4xl mx-auto">
           <ScrollReveal>
             <div className="glass-effect rounded-3xl p-8 md:p-12 shadow-2xl card-hover">
@@ -222,7 +220,7 @@ export default function Home() {
       </section>
 
       {/* RSVP Section - Mobile Optimized */}
-      <section ref={rsvpRef} className="relative py-12 px-4 z-10">
+      <section className="relative py-16 px-4 z-10">
         <div className="max-w-full mx-auto">
           <ScrollReveal>
             <div className="text-center mb-8">
@@ -396,14 +394,14 @@ export default function Home() {
       </section>
 
       {/* Milestone Timeline Section */}
-      <section className="relative py-12 px-4 z-10">
+      <section className="relative py-16 px-4 z-10">
         <div className="max-w-full mx-auto">
           <MilestoneTimeline />
         </div>
       </section>
 
       {/* Time Capsule Section - Mobile Optimized */}
-      <section ref={timeCapsuleRef} className="relative py-12 px-4 z-10">
+      <section className="relative py-16 px-4 z-10">
         <div className="max-w-full mx-auto">
           <ScrollReveal>
             <div className="text-center mb-8">

@@ -1,9 +1,7 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { Calendar, Baby, Smile, Utensils, BabyIcon, Heart, Cake } from 'lucide-react';
-import confetti from 'canvas-confetti';
 import ScrollReveal from './ScrollReveal';
 
 interface Milestone {
@@ -118,40 +116,9 @@ const milestones: Milestone[] = [
 ];
 
 export default function MilestoneTimeline() {
-  const month12Ref = useRef<HTMLDivElement>(null);
-  const [confettiTriggered, setConfettiTriggered] = useState(false);
-
-  // Confetti for Month 12 only
-  useEffect(() => {
-    const handleScroll = () => {
-      if (month12Ref.current && !confettiTriggered) {
-        const rect = month12Ref.current.getBoundingClientRect();
-        const windowHeight = window.innerHeight;
-        const windowWidth = window.innerWidth;
-        
-        if (rect.top < windowHeight * 0.7 && rect.top > -rect.height) {
-          setConfettiTriggered(true);
-          
-          // Calculate confetti origin based on milestone position
-          const x = (rect.left + rect.width / 2) / windowWidth;
-          const y = (rect.top + rect.height / 2) / windowHeight;
-          
-          confetti({
-            particleCount: 100,
-            spread: 70,
-            origin: { x, y },
-            colors: ['#667eea', '#764ba2', '#f093fb'],
-          });
-        }
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [confettiTriggered]);
 
   return (
-    <div className="relative py-12 px-4">
+    <div className="relative py-8 px-4">
       <div className="max-w-4xl mx-auto">
         <ScrollReveal>
           <div className="text-center mb-12">
@@ -169,14 +136,9 @@ export default function MilestoneTimeline() {
           <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-purple-200 via-purple-300 to-pink-200 transform md:-translate-x-1/2"></div>
 
           <div className="space-y-8">
-            {milestones.map((milestone, index) => {
-              const isMonth12 = milestone.id === '12';
-              return (
+            {milestones.map((milestone, index) => (
                 <ScrollReveal key={milestone.id} delay={index * 50}>
-                  <div 
-                    ref={isMonth12 ? month12Ref : null}
-                    className="relative flex items-start gap-4 md:gap-6"
-                  >
+                  <div className="relative flex items-start gap-4 md:gap-6">
                     {/* Timeline dot */}
                     <div className="relative z-10 flex-shrink-0">
                       <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shadow-lg border-4 border-white">
@@ -220,8 +182,7 @@ export default function MilestoneTimeline() {
                     </div>
                   </div>
                 </ScrollReveal>
-              );
-            })}
+            ))}
           </div>
         </div>
       </div>
