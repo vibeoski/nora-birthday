@@ -156,13 +156,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Milestone Timeline Section */}
-      <section className="relative py-12 px-4 z-10">
-        <div className="max-w-full mx-auto">
-          <MilestoneTimeline />
-        </div>
-      </section>
-
       {/* Countdown Section - Mobile Optimized */}
       <section ref={countdownRef} className="relative py-12 px-4 z-10">
         <div className="max-w-full mx-auto">
@@ -211,8 +204,8 @@ export default function Home() {
                   <MapPin className="w-8 h-8 text-blue-600" />
                 </div>
                 <div className="text-xs text-slate-500 font-medium mb-2 uppercase tracking-wider">Location</div>
-                <div className="text-xl font-semibold text-slate-900">Your Venue</div>
-                <div className="text-lg text-slate-600">Name</div>
+                <div className="text-xl font-semibold text-slate-900">Our Home</div>
+                <div className="text-lg text-slate-600">Nadakkuthazha, Vatakara</div>
               </div>
             </div>
 
@@ -479,6 +472,13 @@ export default function Home() {
             </form>
             </div>
           </ScrollReveal>
+        </div>
+      </section>
+
+      {/* Milestone Timeline Section */}
+      <section className="relative py-12 px-4 z-10">
+        <div className="max-w-full mx-auto">
+          <MilestoneTimeline />
         </div>
       </section>
     </div>
